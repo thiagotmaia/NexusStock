@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block content %}
+<div class="topo-pagina">
+    <h2>Produtos em Estoque</h2>
+    <a href="{{ url_for('novo_produto') }}" class="botao">Novo Produto</a>
+</div>
+
+{% if produtos %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Modelo</th>
+            <th>Categoria</th>
+            <th>Cor</th>
+            <th>Tamanho</th>
+            <th>Quantidade</th>
+            <th>Preço</th>
+            <th>Fornecedor</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.id }}</td>
+            <td>{{ produto.codigo }}</td>
+            <td>{{ produto.nome_modelo }}</td>
+            <td>{{ produto.categoria }}</td>
+            <td>{{ produto.cor }}</td>
+            <td>{{ produto.tamanho }}</td>
+            <td>{{ produto.quantidade }}</td>
+            <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+            <td>{{ produto.fornecedor or "-" }}</td>
+            <td>
+                <a href="{{ url_for('editar_produto', id=produto.id) }}" class="botao">
+                    Editar
+                </a>
+
+                <a href="{{ url_for('movimentar_produto', id=produto.id) }}" class="botao">
+                    Movimentar
+                </a>
+
+                <form action="{{ url_for('excluir_produto', id=produto.id) }}"
+                      method="POST"
+                      style="display: inline;">
+                    <button type="submit"
+                            class="botao botao-secundario"
+                            onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                        Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Nenhum produto cadastrado ainda.</p>
+{% endif %}
+{% endblock %}

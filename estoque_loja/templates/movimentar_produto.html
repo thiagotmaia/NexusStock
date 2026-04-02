@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Movimentar Produto{% endblock %}
+
+{% block content %}
+<h2>Movimentar Produto</h2>
+
+<div class="card-info">
+    <p><strong>Código:</strong> {{ produto.codigo }}</p>
+    <p><strong>Modelo:</strong> {{ produto.nome_modelo }}</p>
+    <p><strong>Categoria:</strong> {{ produto.categoria }}</p>
+    <p><strong>Cor:</strong> {{ produto.cor }}</p>
+    <p><strong>Tamanho:</strong> {{ produto.tamanho }}</p>
+    <p><strong>Quantidade Atual:</strong> {{ produto.quantidade }}</p>
+</div>
+
+{% if erro %}
+<div class="mensagem-erro">
+    {{ erro }}
+</div>
+{% endif %}
+
+<form method="POST" class="formulario">
+    <label for="tipo_movimentacao">Tipo de Movimentação</label>
+    <select id="tipo_movimentacao" name="tipo_movimentacao" required>
+        <option value="">Selecione</option>
+        <option value="entrada">Entrada</option>
+        <option value="saida">Saída</option>
+    </select>
+
+    <label for="quantidade">Quantidade</label>
+    <input type="number" id="quantidade" name="quantidade" min="1" required>
+
+    <label for="observacao">Observação</label>
+    <input type="text" id="observacao" name="observacao">
+
+    <div class="acoes-formulario">
+        <button type="submit" class="botao">Salvar Movimentação</button>
+        <a href="{{ url_for('index') }}" class="botao botao-secundario">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

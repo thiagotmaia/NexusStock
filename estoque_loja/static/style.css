@@ -1,0 +1,116 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #222;
+}
+
+header {
+    background-color: #222;
+    color: white;
+    padding: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+main {
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f0f0f0;
+}
+.topo-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.botao {
+    display: inline-block;
+    background-color: #222;
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.botao-secundario {
+    background-color: #777;
+}
+
+.formulario {
+    background-color: white;
+    padding: 20px;
+    max-width: 500px;
+    border: 1px solid #ddd;
+}
+
+.formulario label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.formulario input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.acoes-formulario {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+.card-info {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    max-width: 500px;
+}
+
+.mensagem-erro {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    padding: 12px;
+    margin-bottom: 20px;
+    max-width: 500px;
+}
+
+.formulario select {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}

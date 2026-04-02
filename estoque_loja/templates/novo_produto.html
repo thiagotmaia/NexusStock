@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Produto{% endblock %}
+
+{% block content %}
+<h2>Cadastrar Novo Produto</h2>
+
+<form method="POST" class="formulario">
+    <label for="codigo">Código</label>
+    <input type="text" id="codigo" name="codigo" required>
+
+    <label for="nome_modelo">Modelo</label>
+    <input type="text" id="nome_modelo" name="nome_modelo" required>
+
+    <label for="categoria">Categoria</label>
+    <input type="text" id="categoria" name="categoria" required>
+
+    <label for="cor">Cor</label>
+    <input type="text" id="cor" name="cor" required>
+
+    <label for="tamanho">Tamanho</label>
+    <input type="text" id="tamanho" name="tamanho" required>
+
+    <label for="quantidade">Quantidade</label>
+    <input type="number" id="quantidade" name="quantidade" min="0" required>
+
+    <label for="preco">Preço</label>
+    <input type="number" id="preco" name="preco" step="0.01" min="0" required>
+
+    <label for="fornecedor">Fornecedor</label>
+    <input type="text" id="fornecedor" name="fornecedor">
+
+    <div class="acoes-formulario">
+        <button type="submit" class="botao">Salvar</button>
+        <a href="{{ url_for('index') }}" class="botao botao-secundario">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
