@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de Movimentações - Gestão de Estoque{% endblock %}
+
+{% block content %}
+<div class="topo-pagina">
+    <h2>Histórico de Movimentações</h2>
+    <a href="{{ url_for('index') }}" class="botao botao-secundario">Voltar ao Painel</a>
+</div>
+
+{% if movimentacoes %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Data/Hora</th>
+                <th>Produto</th>
+                <th>Tipo</th>
+                <th>Qtd</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mov in movimentacoes %}
+            <tr>
+                <td>{{ mov.data_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td><span style="font-weight: 600;">{{ mov.produto_nome }}</span> ({{ mov.produto_codigo }})</td>
+                <td>
+                    {% if mov.tipo == 'entrada' %}
+                    <span class="text-success" style="font-weight: 600;">Entrada</span>
+                    {% else %}
+                    <span class="text-danger" style="font-weight: 600;">Saída</span>
+                    {% endif %}
+                </td>
+                <td>{{ mov.quantidade }}</td>
+                <td>{{ mov.observacao or "-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card-info">
+    <p>Nenhuma movimentação registrada.</p>
+</div>
+{% endif %}
+
+{% endblock %}

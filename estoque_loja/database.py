@@ -1,6 +1,8 @@
 import sqlite3
+import os
 
-DATABASE_NAME = "estoque.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE_NAME = os.path.join(BASE_DIR, "estoque.db")
 
 
 def get_connection():

@@ -1,42 +1,42 @@
 {% extends "base.html" %}
 
-{% block title %}Movimentar Produto{% endblock %}
+{% block title %}Movimentar Produto - Gestão de Estoque{% endblock %}
 
 {% block content %}
-<h2>Movimentar Produto</h2>
+<div class="centered-container">
+    <div class="formulario-wrapper">
+        <h2>Movimentar Produto</h2>
+        
+        <div class="card-info" style="margin-bottom: 2.5rem;">
+            <p><strong>Produto:</strong> {{ produto.nome_modelo }} ({{ produto.codigo }})</p>
+            <p><strong>Estoque Atual:</strong> <span class="{% if produto.quantidade <= 5 %}text-danger{% else %}text-success{% endif %}" style="font-weight: 600;">{{ produto.quantidade }} unidades</span></p>
+        </div>
 
-<div class="card-info">
-    <p><strong>Código:</strong> {{ produto.codigo }}</p>
-    <p><strong>Modelo:</strong> {{ produto.nome_modelo }}</p>
-    <p><strong>Categoria:</strong> {{ produto.categoria }}</p>
-    <p><strong>Cor:</strong> {{ produto.cor }}</p>
-    <p><strong>Tamanho:</strong> {{ produto.tamanho }}</p>
-    <p><strong>Quantidade Atual:</strong> {{ produto.quantidade }}</p>
-</div>
+        {% if erro %}
+        <div class="mensagem-erro" style="color: var(--danger); background: #fef2f2; padding: 1rem; border: 1px solid #fecaca; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            {{ erro }}
+        </div>
+        {% endif %}
 
-{% if erro %}
-<div class="mensagem-erro">
-    {{ erro }}
-</div>
-{% endif %}
+        <form method="POST" class="formulario">
+            <label for="tipo_movimentacao">Tipo de Movimentação</label>
+            <select id="tipo_movimentacao" name="tipo_movimentacao" required>
+                <option value="">Selecione...</option>
+                <option value="entrada">Entrada (+)</option>
+                <option value="saida">Saída (-)</option>
+            </select>
 
-<form method="POST" class="formulario">
-    <label for="tipo_movimentacao">Tipo de Movimentação</label>
-    <select id="tipo_movimentacao" name="tipo_movimentacao" required>
-        <option value="">Selecione</option>
-        <option value="entrada">Entrada</option>
-        <option value="saida">Saída</option>
-    </select>
+            <label for="quantidade">Quantidade</label>
+            <input type="number" id="quantidade" name="quantidade" min="1" required>
 
-    <label for="quantidade">Quantidade</label>
-    <input type="number" id="quantidade" name="quantidade" min="1" required>
+            <label for="observacao">Observação</label>
+            <input type="text" id="observacao" name="observacao">
 
-    <label for="observacao">Observação</label>
-    <input type="text" id="observacao" name="observacao">
-
-    <div class="acoes-formulario">
-        <button type="submit" class="botao">Salvar Movimentação</button>
-        <a href="{{ url_for('index') }}" class="botao botao-secundario">Cancelar</a>
+            <div class="acoes-formulario mt-2">
+                <button type="submit" class="botao botao-primary" style="flex: 2;">Confirmar</button>
+                <a href="{{ url_for('index') }}" class="botao botao-secundario" style="flex: 1;">Voltar</a>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 {% endblock %}

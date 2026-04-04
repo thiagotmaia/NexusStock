@@ -1,116 +1,266 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #f4f4f4;
-    color: #222;
+/* 
+   Design Sophisticated & Minimalist
+   Palette:
+   - Deep Slate: #0f172a
+   - Cool Gray: #64728b
+   - Border Light: #e2e8f0
+   - Accent Blue: #2563eb
+   - Bg Soft: #fcfcfd
+*/
+
+:root {
+    --primary: #0f172a;
+    --accent: #2563eb;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --bg: #fcfcfd;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --danger: #dc2626;
+    --success: #059669;
+    --radius: 4px; /* Bordas mais nítidas e quadradas dão ar mais sério */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Nav */
 header {
-    background-color: #222;
-    color: white;
-    padding: 20px;
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header h1 {
-    margin: 0;
-}
-
-nav {
-    margin-top: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--primary);
 }
 
 nav a {
-    color: white;
+    color: var(--text-muted);
     text-decoration: none;
-    margin-right: 15px;
+    margin-left: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
 }
 
+nav a:hover {
+    color: var(--primary);
+}
+
+/* Layout */
 main {
-    padding: 20px;
+    max-width: 1300px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+}
+
+.topo-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--primary);
+}
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.card {
+    background: var(--surface);
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.card h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.card p {
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--primary);
+}
+
+/* Tables */
+.table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: white;
-}
-
-table th,
-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
 }
 
 table th {
-    background-color: #f0f0f0;
-}
-.topo-pagina {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    background: #f8fafc;
+    padding: 1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
 }
 
+table td {
+    padding: 1.25rem 1rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+table tr:hover td {
+    background-color: #fcfcfd;
+}
+
+/* Centered Form Layout */
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 60vh;
+    padding-top: 2rem;
+}
+
+.formulario-wrapper {
+    width: 100%;
+    max-width: 700px; /* Formulário maior e centralizado */
+    background: var(--surface);
+    padding: 3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.formulario-wrapper h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: none;
+}
+
+/* Forms */
+.formulario label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.formulario input, 
+.formulario select {
+    width: 100%;
+    padding: 0.875rem; /* Inputs maiores */
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.formulario input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* Buttons */
 .botao {
-    display: inline-block;
-    background-color: #222;
-    color: white;
-    padding: 10px 16px;
-    text-decoration: none;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius);
     cursor: pointer;
-    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.botao-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.botao-primary:hover {
+    background-color: #1e293b;
 }
 
 .botao-secundario {
-    background-color: #777;
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
 }
 
-.formulario {
-    background-color: white;
-    padding: 20px;
-    max-width: 500px;
-    border: 1px solid #ddd;
+.botao-secundario:hover {
+    background-color: #f8fafc;
+    border-color: var(--text-muted);
 }
 
-.formulario label {
-    display: block;
-    margin-top: 12px;
-    margin-bottom: 6px;
-    font-weight: bold;
+.botao-danger {
+    color: var(--danger);
+    background: transparent;
 }
 
-.formulario input {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
+.botao-danger:hover {
+    background: #fef2f2;
 }
 
-.acoes-formulario {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+/* Helpers */
+.text-danger { color: var(--danger); }
+.text-success { color: var(--success); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.mt-2 { margin-top: 2rem; }
+.actions-cell { display: flex; gap: 1rem; justify-content: flex-end; }
+
+/* Info Cards */
 .card-info {
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    max-width: 500px;
-}
-
-.mensagem-erro {
-    background-color: #f8d7da;
-    color: #842029;
-    border: 1px solid #f5c2c7;
-    padding: 12px;
-    margin-bottom: 20px;
-    max-width: 500px;
-}
-
-.formulario select {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    margin-bottom: 2rem;
 }
