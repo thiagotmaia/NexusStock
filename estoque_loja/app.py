@@ -2,84 +2,45 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from database import get_connection
 import pandas as pd
 from io import BytesIO
+from services import (
+    obter_dashboard,
+    criar_produto as criar_produto_service,
+    editar_produto as editar_produto_service,
+    remover_produto as remover_produto_service,
+    processar_movimentacao as processar_movimentacao_service,
+    obter_historico_movimentacoes,
+    obter_produto_para_edicao,
+)
+
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
     conn = get_connection()
-
-    produtos = conn.execute("""
-        SELECT * FROM produtos
-        ORDER BY id DESC
-    """).fetchall()
-
-    total_produtos = conn.execute("""
-        SELECT COUNT(*) as total FROM produtos
-    """).fetchone()["total"]
-
-    total_itens = conn.execute("""
-        SELECT SUM(quantidade) as total FROM produtos
-    """).fetchone()["total"] or 0
-
-    valor_total = conn.execute("""
-        SELECT SUM(quantidade * preco) as total FROM produtos
-    """).fetchone()["total"] or 0
-
-    produtos_baixo_estoque = conn.execute("""
-        SELECT COUNT(*) as total FROM produtos
-        WHERE quantidade <= 5
-    """).fetchone()["total"]
-
-    conn.close()
+    try:
+        dashboard = obter_dashboard(conn)
+    finally:
+        conn.close()
 
     return render_template(
         "index.html",
-        produtos=produtos,
-        total_produtos=total_produtos,
-        total_itens=total_itens,
-        valor_total=valor_total,
-        produtos_baixo_estoque=produtos_baixo_estoque
+        produtos=dashboard["produtos"],
+        total_produtos=dashboard["total_produtos"],
+        total_itens=dashboard["total_itens"],
+        valor_total=dashboard["valor_total"],
+        produtos_baixo_estoque=dashboard["produtos_baixo_estoque"],
     )
 
 
 @app.route("/produtos/novo", methods=["GET", "POST"])
 def novo_produto():
     if request.method == "POST":
-        codigo = request.form["codigo"]
-        nome_modelo = request.form["nome_modelo"]
-        categoria = request.form["categoria"]
-        cor = request.form["cor"]
-        tamanho = request.form["tamanho"]
-        quantidade = request.form["quantidade"]
-        preco = request.form["preco"]
-        fornecedor = request.form["fornecedor"]
-
         conn = get_connection()
-        conn.execute("""
-            INSERT INTO produtos (
-                codigo,
-                nome_modelo,
-                categoria,
-                cor,
-                tamanho,
-                quantidade,
-                preco,
-                fornecedor
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            codigo,
-            nome_modelo,
-            categoria,
-            cor,
-            tamanho,
-            quantidade,
-            preco,
-            fornecedor
-        ))
-        conn.commit()
-        conn.close()
+        try:
+            criar_produto_service(conn, request.form)
+        finally:
+            conn.close()
 
         return redirect(url_for("index"))
 
@@ -91,34 +52,16 @@ def editar_produto(id):
     conn = get_connection()
 
     if request.method == "POST":
-        conn.execute("""
-            UPDATE produtos
-            SET codigo = ?,
-                nome_modelo = ?,
-                categoria = ?,
-                cor = ?,
-                tamanho = ?,
-                quantidade = ?,
-                preco = ?,
-                fornecedor = ?
-            WHERE id = ?
-        """, (
-            request.form["codigo"],
-            request.form["nome_modelo"],
-            request.form["categoria"],
-            request.form["cor"],
-            request.form["tamanho"],
-            request.form["quantidade"],
-            request.form["preco"],
-            request.form["fornecedor"],
-            id
-        ))
-        conn.commit()
-        conn.close()
+        try:
+            editar_produto_service(conn, id, request.form)
+        finally:
+            conn.close()
         return redirect(url_for("index"))
 
-    produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (id,)).fetchone()
-    conn.close()
+    try:
+        produto = obter_produto_para_edicao(conn, id)
+    finally:
+        conn.close()
 
     return render_template("editar_produto.html", produto=produto)
 
@@ -126,9 +69,10 @@ def editar_produto(id):
 @app.route("/produtos/<int:id>/excluir", methods=["POST"])
 def excluir_produto(id):
     conn = get_connection()
-    conn.execute("DELETE FROM produtos WHERE id = ?", (id,))
-    conn.commit()
-    conn.close()
+    try:
+        remover_produto_service(conn, id)
+    finally:
+        conn.close()
 
     return redirect(url_for("index"))
 
@@ -136,74 +80,38 @@ def excluir_produto(id):
 @app.route("/produtos/<int:id>/movimentar", methods=["GET", "POST"])
 def movimentar_produto(id):
     conn = get_connection()
-    produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (id,)).fetchone()
+    try:
+        produto = obter_produto_para_edicao(conn, id)
 
-    if request.method == "POST":
-        tipo_movimentacao = request.form["tipo_movimentacao"]
-        quantidade = int(request.form["quantidade"])
-        observacao = request.form["observacao"]
+        if request.method == "POST":
+            tipo_movimentacao = request.form["tipo_movimentacao"]
+            quantidade = request.form["quantidade"]
+            observacao = request.form["observacao"]
 
-        nova_quantidade = produto["quantidade"]
-
-        if tipo_movimentacao == "entrada":
-            nova_quantidade += quantidade
-        elif tipo_movimentacao == "saida":
-            if quantidade > produto["quantidade"]:
-                conn.close()
+            try:
+                processar_movimentacao_service(conn, produto, tipo_movimentacao, quantidade, observacao)
+            except ValueError as exc:
                 return render_template(
                     "movimentar_produto.html",
                     produto=produto,
-                    erro="Não é possível realizar saída maior do que a quantidade em estoque."
+                    erro=str(exc),
                 )
-            nova_quantidade -= quantidade
 
-        conn.execute("""
-            UPDATE produtos
-            SET quantidade = ?
-            WHERE id = ?
-        """, (nova_quantidade, id))
+            conn.close()
+            return redirect(url_for("index"))
 
-        conn.execute("""
-            INSERT INTO movimentacoes (
-                produto_id,
-                tipo_movimentacao,
-                quantidade,
-                observacao
-            )
-            VALUES (?, ?, ?, ?)
-        """, (
-            id,
-            tipo_movimentacao,
-            quantidade,
-            observacao
-        ))
-
-        conn.commit()
-        conn.close()
-
-        return redirect(url_for("index"))
-
-    conn.close()
-    return render_template("movimentar_produto.html", produto=produto)
+        return render_template("movimentar_produto.html", produto=produto)
+    finally:
+        if conn:
+            conn.close()
 
 @app.route("/movimentacoes")
 def historico_movimentacoes():
     conn = get_connection()
-    movimentacoes = conn.execute("""
-        SELECT
-            movimentacoes.id,
-            produtos.nome_modelo,
-            produtos.codigo,
-            movimentacoes.tipo_movimentacao,
-            movimentacoes.quantidade,
-            movimentacoes.observacao,
-            movimentacoes.data_movimentacao
-        FROM movimentacoes
-        INNER JOIN produtos
-            ON movimentacoes.produto_id = produtos.id
-        ORDER BY movimentacoes.data_movimentacao DESC
-    """).fetchall()
-    conn.close()
+    try:
+        movimentacoes = obter_historico_movimentacoes(conn)
+    finally:
+        conn.close()
 
     return render_template("historico_movimentacoes.html", movimentacoes=movimentacoes)
 
